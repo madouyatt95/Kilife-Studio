@@ -21,50 +21,75 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
+                {/* Toujours visible pour éditer ses infos */}
                 <Card className="bg-slate-900 border-white/5 hover:border-primary/50 transition-colors group">
                     <CardHeader>
                         <User className="h-8 w-8 text-primary mb-2 group-hover:scale-110 transition-transform" />
                         <CardTitle>Mon Profil</CardTitle>
-                        <CardDescription>Mettez à jour vos informations et votre bande démo.</CardDescription>
+                        <CardDescription>Consultez et complétez vos informations.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Button asChild variant="secondary" className="w-full">
                             <Link href="/dashboard/profile">
-                                Modifier le profil <ChevronRight className="ml-2 h-4 w-4" />
+                                Voir le profil <ChevronRight className="ml-2 h-4 w-4" />
                             </Link>
                         </Button>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-slate-900 border-white/5 hover:border-primary/50 transition-colors group">
-                    <CardHeader>
-                        <ClipboardList className="h-8 w-8 text-primary mb-2 group-hover:scale-110 transition-transform" />
-                        <CardTitle>Candidatures</CardTitle>
-                        <CardDescription>Suivez l'état de vos postulations aux castings.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Button asChild variant="secondary" className="w-full">
-                            <Link href="/dashboard/applications">
-                                Mes postulations <ChevronRight className="ml-2 h-4 w-4" />
-                            </Link>
-                        </Button>
-                    </CardContent>
-                </Card>
+                {/* Visible uniquement pour les acteurs/techniciens */}
+                {((session?.user?.roles as string[])?.includes("ACTOR") || (session?.user?.roles as string[])?.includes("CREW")) && (
+                    <Card className="bg-slate-900 border-white/5 hover:border-primary/50 transition-colors group">
+                        <CardHeader>
+                            <ClipboardList className="h-8 w-8 text-primary mb-2 group-hover:scale-110 transition-transform" />
+                            <CardTitle>Candidatures</CardTitle>
+                            <CardDescription>Suivez l'état de vos postulations aux castings.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button asChild variant="secondary" className="w-full">
+                                <Link href="/dashboard/applications">
+                                    Mes postulations <ChevronRight className="ml-2 h-4 w-4" />
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                )}
 
-                <Card className="bg-slate-900 border-white/5 hover:border-primary/50 transition-colors group">
-                    <CardHeader>
-                        <Clapperboard className="h-8 w-8 text-primary mb-2 group-hover:scale-110 transition-transform" />
-                        <CardTitle>Castings Pro</CardTitle>
-                        <CardDescription>Publiez et gérez vos propres appels à casting.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Button asChild variant="secondary" className="w-full">
-                            <Link href="/dashboard/castings">
-                                Gérer mes castings <ChevronRight className="ml-2 h-4 w-4" />
-                            </Link>
-                        </Button>
-                    </CardContent>
-                </Card>
+                {/* Visible uniquement pour les Pros */}
+                {(session?.user?.roles as string[])?.includes("PRO") && (
+                    <Card className="bg-slate-900 border-white/5 hover:border-primary/50 transition-colors group">
+                        <CardHeader>
+                            <Clapperboard className="h-8 w-8 text-primary mb-2 group-hover:scale-110 transition-transform" />
+                            <CardTitle>Espace Pro</CardTitle>
+                            <CardDescription>Gérez vos castings et examinez les candidatures.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button asChild variant="secondary" className="w-full">
+                                <Link href="/dashboard/castings">
+                                    Gérer mes castings <ChevronRight className="ml-2 h-4 w-4" />
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* Visible uniquement pour les Agents */}
+                {(session?.user?.roles as string[])?.includes("AGENT") && (
+                    <Card className="bg-slate-900 border-white/5 hover:border-primary/50 transition-colors group">
+                        <CardHeader>
+                            <Star className="h-8 w-8 text-primary mb-2 group-hover:scale-110 transition-transform" />
+                            <CardTitle>Agence de Talents</CardTitle>
+                            <CardDescription>Gérez votre portfolio d'artistes et mannequins.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button asChild variant="secondary" className="w-full">
+                                <Link href="/dashboard/agent">
+                                    Gérer mes talents <ChevronRight className="ml-2 h-4 w-4" />
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                )}
             </div>
 
             <Card className="bg-gradient-to-br from-slate-900 to-slate-950 border-primary/20 overflow-hidden relative">

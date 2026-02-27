@@ -1,0 +1,1 @@
+postgresql://postgres:fRDFSZ06IAGdttpH@db.yymzpavgvoygniqlawms.supabase.co:6543/postgres?pgbouncer=true
