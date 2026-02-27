@@ -2,7 +2,7 @@ import Stripe from "stripe"
 import { PaymentRequest, PaymentResult } from "./index"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-    apiVersion: "2024-11-20.acacia"
+    apiVersion: "2026-02-25.clover"
 })
 
 export async function createStripeCheckoutSession(request: PaymentRequest): Promise<PaymentResult> {
