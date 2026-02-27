@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@/lib/prisma"
 
-const prisma = new PrismaClient()
 
 // GET: List endorsements for a specific actor
 export async function GET(req: Request) {

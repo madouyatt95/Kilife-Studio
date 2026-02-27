@@ -2,10 +2,10 @@ import NextAuth, { type DefaultSession } from "next-auth"
 import { type JWT } from "next-auth/jwt"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import { PrismaClient, Role } from "@prisma/client"
+import { Role } from "@prisma/client"
+import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 
-const prisma = new PrismaClient()
 
 declare module "next-auth" {
     interface Session {

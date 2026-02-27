@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -7,10 +7,8 @@ import { PlayCircle, Calendar, Users, Film as FilmIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
-const prisma = new PrismaClient()
-
 // Allow dynamic params
-export const revalidate = 3600
+export const dynamic = "force-dynamic"
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
     const film = await prisma.film.findUnique({
