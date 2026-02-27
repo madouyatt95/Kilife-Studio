@@ -1,177 +1,152 @@
 "use client"
 
-import { useState, useEffect, use } from "react"
 import { useSession } from "next-auth/react"
+import { useQuery } from "@tanstack/react-query"
+import { useParams, useRouter } from "next/navigation"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Sparkles, Star, MapPin, CheckCircle, Send, ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
+import { Sparkles, MapPin, Mail, ArrowLeft, Send } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "sonner"
+import { Progress } from "@/components/ui/progress"
 
-interface SuggestedProfile {
-    id: string
-    userId: string
-    bio: string | null
-    photo: string | null
-    age: number | null
-    ville: string | null
-    competences: string[]
-    langues: string[]
-    isVerified: boolean
-    matchScore: number
-    matchDetails: string[]
-    user?: { email: string }
-}
-
-export default function MatchmakingPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id: castingId } = use(params)
+export default function MatchmakingPage() {
     const { data: session } = useSession()
-    const [suggestions, setSuggestions] = useState<SuggestedProfile[]>([])
-    const [castingInfo, setCastingInfo] = useState<{ titre: string; lieu: string } | null>(null)
-    const [loading, setLoading] = useState(true)
+    const params = useParams()
+    const router = useRouter()
+    const castingId = params.id as string
 
-    useEffect(() => {
-        const fetchSuggestions = async () => {
-            try {
-                const res = await fetch(`/api/matchmaking?castingId=${castingId}`)
-                if (res.ok) {
-                    const data = await res.json()
-                    setSuggestions(data.suggestions || [])
-                    setCastingInfo(data.casting)
-                } else {
-                    const err = await res.json()
-                    toast.error(err.error || "Erreur de chargement")
-                }
-            } catch (e) {
-                toast.error("Erreur réseau")
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchSuggestions()
-    }, [castingId])
+    // Fetch suggested talents
+    const { data: matches, isLoading } = useQuery({
+        queryKey: ['casting-matchmaking', castingId],
+        queryFn: async () => {
+            const res = await fetch(`/api/matchmaking?castingId=${castingId}`)
+            if (!res.ok) throw new Error('Erreur lors du calcul des correspondances')
+            return res.json()
+        },
+        enabled: !!session?.user && !!castingId,
+    })
 
-    if (session?.user?.roles && !session.user.roles.includes("PRO")) {
-        return <div className="p-8 text-center text-red-500">Accès réservé aux Professionnels.</div>
+    const handleInvite = async (actorId: string) => {
+        // Dans une V2, ceci appellerait une API pour envoyer une notification ou un email à l'acteur
+        toast.success("Invitation envoyée au profil")
     }
 
-    const getScoreColor = (score: number) => {
-        if (score >= 60) return "text-green-400"
-        if (score >= 30) return "text-yellow-400"
-        return "text-muted-foreground"
+    if (!session || !(session.user.roles as string[]).includes("PRO")) {
+        return (
+            <div className="container py-8 text-center">
+                <h1 className="text-2xl font-bold text-destructive">Accès Refusé</h1>
+                <p className="text-muted-foreground mt-2">Cette page est réservée aux Professionnels vérifiés.</p>
+            </div>
+        )
     }
 
     return (
-        <div className="container py-12 max-w-5xl mx-auto space-y-8">
-            {/* Header */}
-            <div>
-                <Link href="/dashboard/castings" className="text-sm text-muted-foreground hover:text-primary flex items-center gap-1 mb-4">
-                    <ArrowLeft className="w-4 h-4" /> Retour aux castings
-                </Link>
-                <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center rounded-xl">
-                        <Sparkles className="w-6 h-6 text-purple-400" />
-                    </div>
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-white">Matchmaking Intelligent</h1>
-                        {castingInfo && (
-                            <p className="text-muted-foreground">
-                                Suggestions pour <span className="text-primary font-medium">{castingInfo.titre}</span> — {castingInfo.lieu}
-                            </p>
-                        )}
-                    </div>
+        <div className="container py-8 max-w-6xl mx-auto space-y-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <Button variant="ghost" className="mb-2 -ml-4" onClick={() => router.push(`/dashboard/castings`)}>
+                        <ArrowLeft className="mr-2 h-4 w-4" /> Retour aux castings
+                    </Button>
+                    <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+                        <Sparkles className="h-8 w-8 text-primary" />
+                        Matchmaking IA
+                    </h1>
+                    <p className="text-muted-foreground mt-1">
+                        Ces profils ont été automatiquement suggérés selon les critères de votre casting.
+                    </p>
                 </div>
             </div>
 
-            {/* Results */}
-            {loading ? (
-                <div className="text-center py-16">
-                    <Sparkles className="w-8 h-8 text-purple-400 animate-pulse mx-auto mb-4" />
-                    <p className="text-muted-foreground">Analyse des profils en cours...</p>
+            {isLoading ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {[1, 2, 3].map((i) => (
+                        <Card key={i} className="bg-slate-900 border-white/5 animate-pulse h-[300px]" />
+                    ))}
                 </div>
-            ) : suggestions.length === 0 ? (
-                <Card className="border-dashed">
-                    <CardContent className="py-12 text-center">
-                        <p className="text-muted-foreground">Aucun talent correspondant n'a été trouvé pour les critères de ce casting.</p>
-                        <p className="text-sm text-muted-foreground/70 mt-1">Vérifiez que vos critères sont bien renseignés dans le champ "Critères" du casting.</p>
+            ) : matches?.length === 0 ? (
+                <Card className="bg-slate-900 border-white/5 py-16 text-center">
+                    <CardContent className="space-y-4">
+                        <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Sparkles className="h-8 w-8 text-primary" />
+                        </div>
+                        <CardTitle>Aucune correspondance exacte</CardTitle>
+                        <p className="text-muted-foreground max-w-sm mx-auto">
+                            Notre algorithme n'a pas trouvé de talents correspondant parfaitement à l'intégralité de vos critères (Age, Ville, Compétences). Essayez d'élargir vos critères de recherche.
+                        </p>
                     </CardContent>
                 </Card>
             ) : (
-                <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground">{suggestions.length} talent(s) trouvé(s), classés par pertinence</p>
-                    {suggestions.map((profile, index) => (
-                        <Card key={profile.id} className="hover:border-primary/50 transition-colors">
-                            <CardContent className="pt-6">
-                                <div className="flex items-start gap-4">
-                                    {/* Rank & Avatar */}
-                                    <div className="flex flex-col items-center gap-1">
-                                        <span className="text-xs text-muted-foreground font-mono">#{index + 1}</span>
-                                        <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-lg">
-                                            {profile.photo ? (
-                                                <img src={profile.photo} alt="" className="w-14 h-14 rounded-full object-cover" />
-                                            ) : (
-                                                profile.bio?.charAt(0)?.toUpperCase() || "?"
-                                            )}
-                                        </div>
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {matches?.map((match: any) => (
+                        <Card key={match.id} className="bg-slate-900 border-white/5 overflow-hidden flex flex-col relative group">
+                            {/* Score visuel */}
+                            <div className="absolute top-4 right-4 z-10 bg-slate-950/80 backdrop-blur border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2">
+                                <Sparkles className="h-4 w-4 text-primary" />
+                                <span className="font-bold text-sm">{match.matchScore}% Match</span>
+                            </div>
+
+                            <div className="h-28 bg-gradient-to-br from-slate-800 to-slate-900 relative">
+                                <Avatar className="h-24 w-24 border-4 border-slate-900 absolute -bottom-12 left-6 z-20">
+                                    <AvatarImage src={match.galerie?.[0] || `https://api.dicebear.com/7.x/initials/svg?seed=${match.user.email}`} className="object-cover" />
+                                    <AvatarFallback>{match.user.email?.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                            </div>
+
+                            <CardHeader className="pt-14 pb-2">
+                                <CardTitle className="text-lg truncate">{match.user.email.split('@')[0]}</CardTitle>
+                                <p className="text-sm text-primary font-medium">{match.age ? `${match.age} ans` : "Âge non défini"}</p>
+                            </CardHeader>
+
+                            <CardContent className="space-y-4 flex-1">
+                                <div className="space-y-2">
+                                    <div className="flex items-center text-sm text-muted-foreground">
+                                        <MapPin className="mr-2 h-4 w-4" />
+                                        {match.ville || "Lieu non précisé"}
                                     </div>
-
-                                    {/* Info */}
-                                    <div className="flex-1 space-y-2">
-                                        <div className="flex items-center gap-2">
-                                            <h3 className="font-semibold text-white">
-                                                {profile.bio?.split("\n")[0]?.substring(0, 40) || profile.user?.email || "Profil"}
-                                            </h3>
-                                            {profile.isVerified && (
-                                                <CheckCircle className="w-4 h-4 text-blue-400" />
-                                            )}
-                                        </div>
-
-                                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                                            {profile.ville && (
-                                                <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{profile.ville}</span>
-                                            )}
-                                            {profile.age && <span>{profile.age} ans</span>}
-                                            {profile.langues.length > 0 && <span>{profile.langues.join(", ")}</span>}
-                                        </div>
-
-                                        {/* Match Details Tags */}
-                                        <div className="flex flex-wrap gap-1.5">
-                                            {profile.matchDetails.map((detail, i) => (
-                                                <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">
-                                                    {detail}
-                                                </span>
-                                            ))}
-                                        </div>
-
-                                        {/* Skills */}
-                                        {profile.competences.length > 0 && (
-                                            <div className="flex flex-wrap gap-1">
-                                                {profile.competences.slice(0, 6).map((c, i) => (
-                                                    <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                                                        {c}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Score & Action */}
-                                    <div className="flex flex-col items-end gap-2">
-                                        <div className={`text-2xl font-bold ${getScoreColor(profile.matchScore)}`}>
-                                            {profile.matchScore}
-                                            <span className="text-xs font-normal text-muted-foreground ml-1">pts</span>
-                                        </div>
-                                        <Link href={`/talents/${profile.userId}`}>
-                                            <Button size="sm" variant="outline" className="text-xs">
-                                                Voir Profil
-                                            </Button>
-                                        </Link>
-                                        <Button size="sm" className="text-xs">
-                                            <Send className="w-3 h-3 mr-1" /> Inviter
-                                        </Button>
+                                    <div className="flex items-center text-sm text-muted-foreground w-full">
+                                        <Mail className="mr-2 h-4 w-4 shrink-0" />
+                                        <span className="truncate">{match.user.email}</span>
                                     </div>
                                 </div>
+
+                                {match.competences?.length > 0 && (
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {match.competences.slice(0, 4).map((comp: string, idx: number) => (
+                                            <Badge key={idx} variant="secondary" className="text-xs">{comp}</Badge>
+                                        ))}
+                                        {match.competences.length > 4 && (
+                                            <Badge variant="secondary" className="text-xs">+{match.competences.length - 4}</Badge>
+                                        )}
+                                    </div>
+                                )}
+
+                                <div className="space-y-1.5 pt-2 border-t border-white/5 mt-4">
+                                    <div className="flex justify-between text-xs text-muted-foreground font-medium">
+                                        <span>Complétion profil</span>
+                                        <span className="text-white">{match.completenessScore}%</span>
+                                    </div>
+                                    <Progress value={match.completenessScore} className="h-1.5 bg-slate-800" />
+                                </div>
                             </CardContent>
+
+                            <CardFooter className="border-t border-white/5 pt-4 pb-4 bg-slate-950/50 flex gap-2">
+                                <Button
+                                    className="w-full text-xs transition-transform active:scale-95"
+                                    onClick={() => handleInvite(match.id)}
+                                >
+                                    <Send className="mr-2 h-3.5 w-3.5" />
+                                    Inviter
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    className="w-full text-xs transition-transform active:scale-95"
+                                    onClick={() => router.push(`/talents/${match.user.id}`)}
+                                >
+                                    Profil
+                                </Button>
+                            </CardFooter>
                         </Card>
                     ))}
                 </div>

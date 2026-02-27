@@ -1,222 +1,186 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
+import { useQuery } from "@tanstack/react-query"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Users, Plus, Trash2, Building2, Mail, MapPin } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { UserPlus, Star, Mail, MapPin } from "lucide-react"
+import { useState } from "react"
 import { toast } from "sonner"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-interface Talent {
-    id: string
-    bio: string | null
-    ville: string | null
-    competences: string[]
-    photo: string | null
-    user?: { email: string }
-}
-
-export default function AgentDashboardPage() {
+export default function AgentDashboard() {
     const { data: session } = useSession()
-    const [talents, setTalents] = useState<Talent[]>([])
-    const [agencyName, setAgencyName] = useState("")
-    const [loading, setLoading] = useState(true)
-    const [showAddForm, setShowAddForm] = useState(false)
-    const [newEmail, setNewEmail] = useState("")
-    const [newBio, setNewBio] = useState("")
-    const [newVille, setNewVille] = useState("")
-    const [adding, setAdding] = useState(false)
+    const [isAddTalentOpen, setIsAddTalentOpen] = useState(false)
+    const [newTalentEmail, setNewTalentEmail] = useState("")
 
-    useEffect(() => {
-        fetchTalents()
-    }, [])
+    // Fetch agent's talents
+    const { data: talents, isLoading, refetch } = useQuery({
+        queryKey: ['agent-talents'],
+        queryFn: async () => {
+            const res = await fetch('/api/agents/talents')
+            if (!res.ok) throw new Error('Erreur réseau')
+            return res.json()
+        },
+        enabled: !!session?.user,
+    })
 
-    const fetchTalents = async () => {
+    const handleAddTalent = async (e: React.FormEvent) => {
+        e.preventDefault()
         try {
-            const res = await fetch("/api/agents/talents")
-            if (res.ok) {
-                const data = await res.json()
-                setTalents(data.talents || [])
-                setAgencyName(data.agencyName || "")
-            }
-        } catch (e) {
-            console.error(e)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const addTalent = async () => {
-        if (!newEmail) return toast.error("L'email est obligatoire")
-        setAdding(true)
-        try {
-            const res = await fetch("/api/agents/talents", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    newTalent: { email: newEmail, bio: newBio, ville: newVille }
-                })
+            const res = await fetch('/api/agents/talents', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: newTalentEmail })
             })
-            const data = await res.json()
-            if (res.ok) {
-                toast.success("Talent ajouté avec succès !")
-                setNewEmail("")
-                setNewBio("")
-                setNewVille("")
-                setShowAddForm(false)
-                fetchTalents()
-            } else {
-                toast.error(data.error || "Erreur lors de l'ajout")
+
+            if (!res.ok) {
+                const error = await res.json()
+                throw new Error(error.error || "Erreur lors de l'ajout")
             }
-        } catch (e) {
-            toast.error("Erreur réseau")
-        } finally {
-            setAdding(false)
+
+            toast.success("Talent ajouté avec succès")
+            setNewTalentEmail("")
+            setIsAddTalentOpen(false)
+            refetch()
+        } catch (error: any) {
+            toast.error(error.message)
         }
     }
 
-    const removeTalent = async (actorProfileId: string) => {
-        try {
-            const res = await fetch("/api/agents/talents", {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ actorProfileId })
-            })
-            if (res.ok) {
-                toast.success("Talent retiré de votre agence")
-                fetchTalents()
-            } else {
-                const data = await res.json()
-                toast.error(data.error || "Erreur")
-            }
-        } catch (e) {
-            toast.error("Erreur réseau")
-        }
-    }
-
-    if (session?.user?.roles && !session.user.roles.includes("AGENT")) {
-        return <div className="p-8 text-center text-red-500">Accès réservé aux Agents artistiques.</div>
+    if (!session || !(session.user.roles as string[]).includes("AGENT")) {
+        return (
+            <div className="container py-8 text-center">
+                <h1 className="text-2xl font-bold text-destructive">Accès Refusé</h1>
+                <p className="text-muted-foreground mt-2">Cette page est réservée aux Agences de Talents.</p>
+            </div>
+        )
     }
 
     return (
-        <div className="container py-12 max-w-5xl mx-auto space-y-8">
-            {/* Header */}
-            <div className="flex items-center justify-between">
+        <div className="container py-8 max-w-6xl mx-auto space-y-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="w-12 h-12 bg-primary/20 flex items-center justify-center rounded-xl">
-                            <Building2 className="w-6 h-6 text-primary" />
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-bold tracking-tight text-white">{agencyName || "Mon Agence"}</h1>
-                            <p className="text-muted-foreground">Tableau de bord Agent</p>
-                        </div>
-                    </div>
+                    <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+                        <Star className="h-8 w-8 text-primary" />
+                        Mon Agence
+                    </h1>
+                    <p className="text-muted-foreground">
+                        Gérez vos artistes, leurs candidatures et leurs profils centralisés.
+                    </p>
                 </div>
-                <Button onClick={() => setShowAddForm(!showAddForm)} variant={showAddForm ? "outline" : "default"}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    {showAddForm ? "Annuler" : "Ajouter un talent"}
-                </Button>
+
+                <Dialog open={isAddTalentOpen} onOpenChange={setIsAddTalentOpen}>
+                    <DialogTrigger asChild>
+                        <Button className="shrink-0">
+                            <UserPlus className="mr-2 h-4 w-4" />
+                            Ajouter un talent
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <form onSubmit={handleAddTalent}>
+                            <DialogHeader>
+                                <DialogTitle>Lier un talent existant</DialogTitle>
+                                <DialogDescription>
+                                    Entrez l'adresse email professionnelle du talent. S'il est inscrit sur la plateforme, il recevra une demande de liaison à votre agence.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="email">Email de l'acteur</Label>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="talent@exemple.com"
+                                        value={newTalentEmail}
+                                        onChange={(e) => setNewTalentEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button type="submit">Envoyer la demande</Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
             </div>
 
-            {/* Add Talent Form */}
-            {showAddForm && (
-                <Card className="border-primary/30 bg-card/50 backdrop-blur">
-                    <CardHeader>
-                        <CardTitle className="text-lg">Nouveau Talent</CardTitle>
-                        <CardDescription>Créez un profil acteur rattaché à votre agence.</CardDescription>
-                    </CardHeader>
+            {isLoading ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {[1, 2, 3].map((i) => (
+                        <Card key={i} className="bg-slate-900 border-white/5 animate-pulse h-[250px]" />
+                    ))}
+                </div>
+            ) : talents?.length === 0 ? (
+                <Card className="bg-slate-900 border-white/5 py-12 text-center">
                     <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="space-y-1">
-                                <label className="text-sm text-muted-foreground">Email *</label>
-                                <Input placeholder="talent@email.com" value={newEmail} onChange={e => setNewEmail(e.target.value)} />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-sm text-muted-foreground">Bio</label>
-                                <Input placeholder="Ex: Acteur, 25 ans, bilingue" value={newBio} onChange={e => setNewBio(e.target.value)} />
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-sm text-muted-foreground">Ville</label>
-                                <Input placeholder="Dakar" value={newVille} onChange={e => setNewVille(e.target.value)} />
-                            </div>
+                        <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                            <UserPlus className="h-8 w-8 text-primary" />
                         </div>
-                        <Button onClick={addTalent} disabled={adding}>
-                            {adding ? "Ajout en cours..." : "Créer le profil"}
+                        <CardTitle>Aucun talent pour le moment</CardTitle>
+                        <p className="text-muted-foreground max-w-sm mx-auto">
+                            Votre agence ne gère encore aucun profil sur la plateforme. Commencez par ajouter vos talents existants.
+                        </p>
+                        <Button variant="outline" onClick={() => setIsAddTalentOpen(true)}>
+                            Ajouter mon premier talent
                         </Button>
                     </CardContent>
                 </Card>
-            )}
-
-            {/* Talents Grid */}
-            <div>
-                <div className="flex items-center gap-2 mb-4">
-                    <Users className="w-5 h-5 text-primary" />
-                    <h2 className="text-xl font-semibold text-white">Mes Talents ({talents.length})</h2>
-                </div>
-
-                {loading ? (
-                    <div className="text-center py-12 text-muted-foreground">Chargement...</div>
-                ) : talents.length === 0 ? (
-                    <Card className="border-dashed">
-                        <CardContent className="py-12 text-center">
-                            <Users className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-                            <p className="text-muted-foreground">Aucun talent sous votre gestion pour le moment.</p>
-                            <p className="text-sm text-muted-foreground/70 mt-1">Cliquez sur "Ajouter un talent" pour commencer.</p>
-                        </CardContent>
-                    </Card>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {talents.map((talent) => (
-                            <Card key={talent.id} className="group hover:border-primary/50 transition-colors">
-                                <CardContent className="pt-6 space-y-3">
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm">
-                                                {talent.bio?.charAt(0)?.toUpperCase() || "?"}
-                                            </div>
-                                            <div>
-                                                <p className="font-medium text-white text-sm">
-                                                    {talent.bio?.split("\n")[0]?.substring(0, 30) || "Profil incomplet"}
-                                                </p>
-                                                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                                    <Mail className="w-3 h-3" />
-                                                    {talent.user?.email || "—"}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-500"
-                                            onClick={() => removeTalent(talent.id)}
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
+            ) : (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {talents?.map((talent: any) => (
+                        <Card key={talent.id} className="bg-slate-900 border-white/5 overflow-hidden flex flex-col">
+                            <div className="h-24 bg-gradient-to-r from-slate-800 to-slate-900 relative">
+                                <Avatar className="h-20 w-20 border-4 border-slate-900 absolute -bottom-10 left-6">
+                                    <AvatarImage src={talent.galerie?.[0] || `https://api.dicebear.com/7.x/initials/svg?seed=${talent.user.name}`} className="object-cover" />
+                                    <AvatarFallback>{talent.user.name?.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                            </div>
+                            <CardHeader className="pt-12 pb-2">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <CardTitle className="text-lg">{talent.user.name}</CardTitle>
+                                        <p className="text-sm text-primary font-medium">{talent.age ? `${talent.age} ans` : "Âge non défini"}</p>
                                     </div>
-
-                                    {talent.ville && (
-                                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                            <MapPin className="w-3 h-3" /> {talent.ville}
-                                        </p>
-                                    )}
-
-                                    {talent.competences?.length > 0 && (
-                                        <div className="flex flex-wrap gap-1">
-                                            {talent.competences.slice(0, 4).map((c, i) => (
-                                                <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                                                    {c}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                )}
-            </div>
+                                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                                        Actif
+                                    </Badge>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="space-y-3 flex-1">
+                                <div className="flex items-center text-sm text-muted-foreground">
+                                    <MapPin className="mr-2 h-4 w-4" />
+                                    {talent.ville || "Lieu non précisé"}
+                                </div>
+                                <div className="flex items-center text-sm text-muted-foreground">
+                                    <Mail className="mr-2 h-4 w-4" />
+                                    <span className="truncate">{talent.user.email}</span>
+                                </div>
+                                {talent.competences?.length > 0 && (
+                                    <div className="flex flex-wrap gap-1 mt-3">
+                                        {talent.competences.slice(0, 3).map((comp: string, idx: number) => (
+                                            <Badge key={idx} variant="secondary" className="text-xs">{comp}</Badge>
+                                        ))}
+                                        {talent.competences.length > 3 && (
+                                            <Badge variant="secondary" className="text-xs">+{talent.competences.length - 3}</Badge>
+                                        )}
+                                    </div>
+                                )}
+                            </CardContent>
+                            <CardFooter className="border-t border-white/5 pt-4 bg-slate-950/50">
+                                <Button variant="outline" className="w-full text-xs h-8">
+                                    Voir le profil complet
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </div>
+            )}
         </div>
     )
 }
