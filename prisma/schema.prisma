@@ -1,10 +1,336 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
+model User {
+  id            String               @id @default(uuid())
+  email         String               @unique
+  passwordHash  String?
+  roles         Role[]
+  verifiedAt    DateTime?
+  avatarUrl     String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  actorProfile  ActorProfile?
+  agentProfile  AgentProfile?
+  articles      Article[]
+  auditLogs     AuditLog[]
+  applications  CastingApplication[]
+  certificates  Certificate[]
+  crewProfile   CrewProfile?
+  messagesSent  Message[]            @relation("MessagesSent")
+  notifications Notification[]
+  payments      Payment[]
+  proProfile    ProProfile?
+  subscriptions Subscription[]
+  progress      UserProgress[]
+  quizAttempts  UserQuizAttempt[]
+}
+
+model ActorProfile {
+  id                String        @id @default(uuid())
+  userId            String        @unique
+  photo             String?
+  galerie           String[]
+  bio               String?
+  age               Int?
+  taille            Int?
+  langues           String[]
+  ville             String?
+  competences       String[]
+  experiences       Json?
+  demoVideoId       String?
+  cvUrl             String?
+  completenessScore Int           @default(0)
+  status            ProfileStatus @default(DRAFT)
+  isVerified        Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  agentId           String?
+  agent             AgentProfile? @relation(fields: [agentId], references: [id])
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  films             Film[]        @relation("FilmActors")
+}
+
+model CrewProfile {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  photo        String?
+  bio          String?
+  professions  String[]
+  experiences  Json?
+  portfolioUrl String?
+  cvUrl        String?
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  films        Film[]   @relation("FilmCrew")
+}
+
+model AgentProfile {
+  id         String         @id @default(uuid())
+  userId     String         @unique
+  agencyName String
+  bio        String?
+  logoUrl    String?
+  siteWeb    String?
+  isVerified Boolean        @default(false)
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  talents    ActorProfile[]
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ProProfile {
+  id          String     @id @default(uuid())
+  userId      String     @unique
+  companyName String
+  siret       String?
+  siteWeb     String?
+  isVerified  Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  castings    Casting[]
+  documents   Document[]
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Casting {
+  id           String               @id @default(uuid())
+  proId        String
+  titre        String
+  projet       String
+  dates        String
+  lieu         String
+  roles        Json
+  criteres     String?
+  remuneration String?
+  deadline     DateTime
+  status       CastingStatus        @default(DRAFT)
+  publishedAt  DateTime?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  proProfile   ProProfile           @relation(fields: [proId], references: [id], onDelete: Cascade)
+  applications CastingApplication[]
+  documents    Document[]
+  messages     Message[]
+}
+
+model Document {
+  id            String              @id @default(uuid())
+  proId         String
+  castingId     String?
+  applicationId String?
+  titre         String
+  type          String
+  pdfUrl        String?
+  status        String              @default("DRAFT")
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  application   CastingApplication? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  casting       Casting?            @relation(fields: [castingId], references: [id], onDelete: Cascade)
+  pro           ProProfile          @relation(fields: [proId], references: [id], onDelete: Cascade)
+}
+
+model CastingApplication {
+  id        String            @id @default(uuid())
+  castingId String
+  actorId   String
+  message   String?
+  pieces    String[]
+  status    ApplicationStatus @default(PENDING)
+  notes     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  actor     User              @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  casting   Casting           @relation(fields: [castingId], references: [id], onDelete: Cascade)
+  documents Document[]
+
+  @@unique([castingId, actorId])
+}
+
+model Message {
+  id        String    @id @default(uuid())
+  castingId String
+  senderId  String
+  content   String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  casting   Casting   @relation(fields: [castingId], references: [id], onDelete: Cascade)
+  sender    User      @relation("MessagesSent", fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model Article {
+  id          String    @id @default(uuid())
+  titre       String
+  slug        String    @unique
+  content     String
+  categoryId  String?
+  authorId    String
+  seoMeta     Json?
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  author      User      @relation(fields: [authorId], references: [id])
+}
+
+model Film {
+  id              String         @id @default(uuid())
+  titre           String
+  slug            String         @unique
+  annee           Int
+  synopsis        String
+  affiche         String?
+  realisateur     String
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  isPublished     Boolean        @default(false)
+  trailerUrl      String?
+  acteurs         ActorProfile[] @relation("FilmActors")
+  equipeTechnique CrewProfile[]  @relation("FilmCrew")
+}
+
+model Course {
+  id           String         @id @default(uuid())
+  titre        String
+  slug         String         @unique
+  description  String
+  thumbnail    String?
+  price        Float?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  certificates Certificate[]
+  modules      Module[]
+  progress     UserProgress[]
+}
+
+model Module {
+  id       String   @id @default(uuid())
+  courseId String
+  titre    String
+  ordre    Int
+  lessons  Lesson[]
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Lesson {
+  id         String         @id @default(uuid())
+  moduleId   String
+  titre      String
+  texte      String?
+  videoId    String?
+  ressources String[]
+  ordre      Int
+  module     Module         @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  quizzes    Quiz[]
+  progress   UserProgress[]
+}
+
+model Quiz {
+  id           String            @id @default(uuid())
+  lessonId     String
+  titre        String
+  passingScore Int               @default(80)
+  lesson       Lesson            @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  questions    QuizQuestion[]
+  attempts     UserQuizAttempt[]
+}
+
+model QuizQuestion {
+  id              String @id @default(uuid())
+  quizId          String
+  texte           String
+  options         Json
+  correctOptionId String
+  quiz            Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+}
+
+model UserQuizAttempt {
+  id        String   @id @default(uuid())
+  userId    String
+  quizId    String
+  score     Int
+  passed    Boolean
+  createdAt DateTime @default(now())
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserProgress {
+  id          String    @id @default(uuid())
+  userId      String
+  courseId    String
+  lessonId    String
+  pourcentage Int       @default(0)
+  completedAt DateTime?
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson      Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model Certificate {
+  id       String   @id @default(uuid())
+  userId   String
+  courseId String
+  uniqueId String   @unique
+  pdfUrl   String?
+  issuedAt DateTime @default(now())
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id          String          @id @default(uuid())
+  userId      String
+  provider    PaymentProvider
+  amount      Float
+  currency    String          @default("XOF")
+  status      PaymentStatus   @default(PENDING)
+  productType ProductType
+  reference   String          @unique
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id          String      @id @default(uuid())
+  userId      String
+  plan        ProductType
+  validUntil  DateTime
+  stripeSubId String?     @unique
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  type      String
+  payload   Json
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  adminId    String
+  action     String
+  targetType String
+  targetId   String
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  admin      User     @relation(fields: [adminId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
@@ -55,402 +381,4 @@ enum ProductType {
   ACADEMY_SUBSCRIPTION
   COURSE_ONE_TIME
   PROFILE_BOOST
-}
-
-model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  passwordHash  String?
-  roles         Role[]
-  verifiedAt    DateTime?
-  avatarUrl     String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  actorProfile  ActorProfile?
-  proProfile    ProProfile?
-  crewProfile   CrewProfile?
-  agentProfile  AgentProfile?
-  
-  applications  CastingApplication[]
-  messagesSent  Message[] @relation("MessagesSent")
-  articles      Article[]
-  progress      UserProgress[]
-  certificates  Certificate[]
-  payments      Payment[]
-  subscriptions Subscription[]
-  notifications Notification[]
-  quizAttempts  UserQuizAttempt[]
-  auditLogs     AuditLog[]
-}
-
-model ActorProfile {
-  id                String   @id @default(uuid())
-  userId            String   @unique
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  agentId           String?
-  agent             AgentProfile? @relation(fields: [agentId], references: [id])
-
-  photo             String?
-  galerie           String[]
-  bio               String?
-  age               Int?
-  taille            Int?
-  langues           String[]
-  ville             String?
-  competences       String[]
-  experiences       Json?    // Array of { title, year, role, production }
-  
-  demoVideoId       String?  // ID in external provider
-  cvUrl             String?
-  
-  completenessScore Int      @default(0)
-  status            ProfileStatus @default(DRAFT)
-  isVerified        Boolean  @default(false)
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
-  films             Film[]   @relation("FilmActors")
-}
-
-model CrewProfile {
-  id                String   @id @default(uuid())
-  userId            String   @unique
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  photo             String?
-  bio               String?
-  professions       String[] // e.g., ["Réalisateur", "Ingénieur du Son", "Scénariste"]
-  experiences       Json?    // Array of { title, year, role, production }
-  
-  portfolioUrl      String?
-  cvUrl             String?
-  
-  isVerified        Boolean  @default(false)
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  films             Film[]   @relation("FilmCrew")
-}
-
-model AgentProfile {
-  id            String   @id @default(uuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  agencyName    String
-  bio           String?
-  logoUrl       String?
-  siteWeb       String?
-  isVerified    Boolean  @default(false)
-  
-  talents       ActorProfile[]
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model ProProfile {
-  id            String   @id @default(uuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  companyName   String
-  siret         String?
-  siteWeb       String?
-  isVerified    Boolean  @default(false)
-  
-  castings      Casting[]
-  documents     Document[]
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model Casting {
-  id            String   @id @default(uuid())
-  proId         String
-  proProfile    ProProfile @relation(fields: [proId], references: [id], onDelete: Cascade)
-  
-  titre         String
-  projet        String
-  dates         String
-  lieu          String
-  roles         Json     // Array of { titre, description, ageMin, ageMax, gender }
-  criteres      String?
-  remuneration  String?
-  deadline      DateTime
-  
-  status        CastingStatus @default(DRAFT)
-  publishedAt   DateTime?
-  
-  applications  CastingApplication[]
-  messages      Message[]
-  documents     Document[]
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model Document {
-  id               String   @id @default(uuid())
-  
-  proId            String
-  pro              ProProfile @relation(fields: [proId], references: [id], onDelete: Cascade)
-  
-  castingId        String?
-  casting          Casting?   @relation(fields: [castingId], references: [id], onDelete: Cascade)
-  
-  applicationId    String?
-  application      CastingApplication? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  
-  titre            String
-  type             String   // "ENGAGEMENT", "IMAGE_RIGHTS", "NDA"
-  pdfUrl           String?
-  
-  status           String   @default("DRAFT") // DRAFT, GENERATED, SIGNED
-  
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-}
-
-model CastingApplication {
-  id            String   @id @default(uuid())
-  castingId     String
-  casting       Casting  @relation(fields: [castingId], references: [id], onDelete: Cascade)
-  actorId       String
-  actor         User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
-  
-  message       String?
-  pieces        String[] // URLs of attached files/videos
-  
-  status        ApplicationStatus @default(PENDING)
-  notes         String?  // Internal notes for PRO
-
-  documents     Document[]
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@unique([castingId, actorId])
-}
-
-model Message {
-  id            String   @id @default(uuid())
-  castingId     String
-  casting       Casting  @relation(fields: [castingId], references: [id], onDelete: Cascade)
-  
-  senderId      String
-  sender        User     @relation("MessagesSent", fields: [senderId], references: [id], onDelete: Cascade)
-  
-  content       String
-  readAt        DateTime?
-  
-  createdAt     DateTime @default(now())
-}
-
-model Article {
-  id            String   @id @default(uuid())
-  titre         String
-  slug          String   @unique
-  content       String   @db.Text
-  categoryId    String?
-  
-  authorId      String
-  author        User     @relation(fields: [authorId], references: [id])
-  
-  seoMeta       Json?    // { title, description, keywords }
-  publishedAt   DateTime?
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model Film {
-  id            String   @id @default(uuid())
-  titre         String
-  slug          String   @unique
-  annee         Int
-  synopsis      String   @db.Text
-  affiche       String?
-  trailerUrl    String?
-  isPublished   Boolean  @default(false)
-  
-  acteurs       ActorProfile[] @relation("FilmActors")
-  equipeTechnique CrewProfile[] @relation("FilmCrew")
-  
-  realisateur   String // Plain text fallback or specific lead director name
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-// Académie Models
-
-model Course {
-  id            String   @id @default(uuid())
-  titre         String
-  slug          String   @unique
-  description   String   @db.Text
-  thumbnail     String?
-  price         Float?   // null means only accessible via subscription
-  
-  modules       Module[]
-  progress      UserProgress[]
-  certificates  Certificate[]
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model Module {
-  id            String   @id @default(uuid())
-  courseId      String
-  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  
-  titre         String
-  ordre         Int
-  
-  lessons       Lesson[]
-}
-
-model Lesson {
-  id            String   @id @default(uuid())
-  moduleId      String
-  module        Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  
-  titre         String
-  texte         String?  @db.Text
-  videoId       String?  // ID in external provider
-  ressources    String[] // URLs to PDFs/files
-  ordre         Int
-  
-  quizzes       Quiz[]
-  progress      UserProgress[]
-}
-
-model Quiz {
-  id            String   @id @default(uuid())
-  lessonId      String
-  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  
-  titre         String
-  passingScore  Int      @default(80) // Percentage
-  
-  questions     QuizQuestion[]
-  attempts      UserQuizAttempt[]
-}
-
-model QuizQuestion {
-  id            String   @id @default(uuid())
-  quizId        String
-  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  
-  texte         String
-  options       Json     // Array of { id, texte }
-  correctOptionId String
-}
-
-model UserQuizAttempt {
-  id            String   @id @default(uuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  quizId        String
-  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  
-  score         Int      // Percentage
-  passed        Boolean
-  
-  createdAt     DateTime @default(now())
-}
-
-model UserProgress {
-  id            String   @id @default(uuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  courseId      String
-  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  
-  lessonId      String
-  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  
-  pourcentage   Int      @default(0)
-  completedAt   DateTime?
-
-  @@unique([userId, lessonId])
-}
-
-model Certificate {
-  id            String   @id @default(uuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  courseId      String
-  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  
-  uniqueId      String   @unique // Public verifiable ID
-  pdfUrl        String?
-  
-  issuedAt      DateTime @default(now())
-}
-
-// Paiements Models
-
-model Payment {
-  id            String   @id @default(uuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  provider      PaymentProvider
-  amount        Float
-  currency      String   @default("XOF") // "XOF" or "EUR"
-  
-  status        PaymentStatus @default(PENDING)
-  productType   ProductType
-  reference     String   @unique // Stripe Intent ID or Wave/Orange reference
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model Subscription {
-  id            String   @id @default(uuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  plan          ProductType // PRO_SUBSCRIPTION or ACADEMY_SUBSCRIPTION
-  validUntil    DateTime
-  stripeSubId   String?  @unique
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model Notification {
-  id            String   @id @default(uuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  type          String   // "NEW_MESSAGE", "APPLICATION_UPDATE", "PROFILE_APPROVED"
-  payload       Json     // Data needed for navigation/display
-  readAt        DateTime?
-  
-  createdAt     DateTime @default(now())
-}
-
-model AuditLog {
-  id            String   @id @default(uuid())
-  adminId       String
-  admin         User     @relation(fields: [adminId], references: [id], onDelete: Cascade)
-  
-  action        String   // "APPROVE_PROFILE", "DELETE_MEDIA", "CHANGE_USER_ROLE"
-  targetType    String   // "ActorProfile", "Article", "User"
-  targetId      String
-  metadata      Json?    // Any extra details
-  
-  createdAt     DateTime @default(now())
 }
