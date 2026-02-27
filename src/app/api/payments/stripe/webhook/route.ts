@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import Stripe from "stripe"
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, ProductType } from "@prisma/client"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
     apiVersion: "2026-02-25.clover"
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
                         amount: session.amount_total ? session.amount_total / 100 : 0,
                         currency: session.currency || "eur",
                         reference: session.id,
-                        productType: metadata.productType
+                        productType: metadata.productType as ProductType
                     }
                 })
 
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
                     await prisma.subscription.create({
                         data: {
                             userId: metadata.userId,
-                            plan: metadata.productType,
+                            plan: metadata.productType as ProductType,
                             stripeSubId: session.subscription as string,
                             validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 1 month rough mock
                         }
