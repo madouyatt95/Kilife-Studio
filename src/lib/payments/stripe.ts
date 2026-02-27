@@ -1,7 +1,7 @@
 import Stripe from "stripe"
 import { PaymentRequest, PaymentResult } from "./index"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_unused_during_build", {
     apiVersion: "2026-02-25.clover"
 })
 

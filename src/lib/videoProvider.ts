@@ -8,7 +8,7 @@
  * (like signed URLs or tokens) inside these methods.
  */
 
-export type VideoProviderType = "CLOUDFLARE" | "MUX" | "VIMEO"
+export type VideoProviderType = "CLOUDFLARE" | "MUX" | "VIMEO" | "MOCK"
 
 interface VideoInfo {
     id: string
