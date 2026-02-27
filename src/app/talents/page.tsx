@@ -22,7 +22,7 @@ export default function TalentsPage() {
     const fetchTalents = async () => {
         setLoading(true)
         try {
-            const res = await fetch(`/api/actors?query=${search}`)
+            const res = await fetch(`/api/actors?query=${search}&t=${Date.now()}`)
             if (res.ok) {
                 const data = await res.json()
                 setTalents(data)
