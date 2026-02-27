@@ -55,6 +55,7 @@ model ActorProfile {
   agent             AgentProfile? @relation(fields: [agentId], references: [id])
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   films             Film[]        @relation("FilmActors")
+  endorsements      Endorsement[]
 }
 
 model CrewProfile {
@@ -88,17 +89,18 @@ model AgentProfile {
 }
 
 model ProProfile {
-  id          String     @id @default(uuid())
-  userId      String     @unique
-  companyName String
-  siret       String?
-  siteWeb     String?
-  isVerified  Boolean    @default(false)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  castings    Casting[]
-  documents   Document[]
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String        @id @default(uuid())
+  userId       String        @unique
+  companyName  String
+  siret        String?
+  siteWeb      String?
+  isVerified   Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  castings     Casting[]
+  documents    Document[]
+  endorsements Endorsement[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Casting {
@@ -139,20 +141,46 @@ model Document {
 }
 
 model CastingApplication {
-  id        String            @id @default(uuid())
-  castingId String
-  actorId   String
-  message   String?
-  pieces    String[]
-  status    ApplicationStatus @default(PENDING)
-  notes     String?
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-  actor     User              @relation(fields: [actorId], references: [id], onDelete: Cascade)
-  casting   Casting           @relation(fields: [castingId], references: [id], onDelete: Cascade)
-  documents Document[]
+  id           String            @id @default(uuid())
+  castingId    String
+  actorId      String
+  message      String?
+  pieces       String[]
+  status       ApplicationStatus @default(PENDING)
+  notes        String?
+  selftapeUrl  String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  actor        User              @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  casting      Casting           @relation(fields: [castingId], references: [id], onDelete: Cascade)
+  documents    Document[]
+  auditionSlot AuditionSlot?
 
   @@unique([castingId, actorId])
+}
+
+model AuditionSlot {
+  id            String             @id @default(uuid())
+  applicationId String             @unique
+  date          DateTime
+  dureeMinutes  Int                @default(15)
+  lieu          String?
+  notes         String?
+  createdAt     DateTime           @default(now())
+  application   CastingApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+}
+
+model Endorsement {
+  id             String        @id @default(uuid())
+  proId          String
+  actorProfileId String
+  rating         Int           @default(5)
+  comment        String?
+  createdAt      DateTime      @default(now())
+  pro            ProProfile    @relation(fields: [proId], references: [id], onDelete: Cascade)
+  actorProfile   ActorProfile  @relation(fields: [actorProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([proId, actorProfileId])
 }
 
 model Message {

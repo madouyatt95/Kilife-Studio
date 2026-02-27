@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { MapPin, Star, Calendar, Ruler, Award, Languages, ArrowLeft, Video, Film, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import EndorsementsSection from "@/components/endorsements/EndorsementsSection"
 
 export default function TalentProfilePage() {
     const params = useParams()
@@ -177,6 +178,11 @@ export default function TalentProfilePage() {
                                 ))}
                             </div>
                         </div>
+                    )}
+
+                    {/* Endorsements / Recommandations */}
+                    {talent.id && (
+                        <EndorsementsSection actorProfileId={talent.id} />
                     )}
                 </div>
             </div>
