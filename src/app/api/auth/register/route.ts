@@ -55,10 +55,10 @@ export async function POST(req: Request) {
             { message: "Compte créé avec succès.", userId: user.id },
             { status: 201 }
         )
-    } catch (error) {
+    } catch (error: any) {
         console.error("Registration error:", error)
         return NextResponse.json(
-            { message: "Une erreur est survenue lors de l'inscription." },
+            { message: "Une erreur est survenue lors de l'inscription.", debug: error?.message || String(error) },
             { status: 500 }
         )
     }
