@@ -29,6 +29,7 @@ async function main() {
             email: 'admin@kilife.com',
             passwordHash,
             roles: ['ADMIN'],
+            name: 'Kilife Admin'
         }
     })
 
@@ -38,6 +39,7 @@ async function main() {
             email: 'pro@kilife.com',
             passwordHash,
             roles: ['PRO'],
+            name: 'Ousmane Fall',
             proProfile: {
                 create: {
                     companyName: 'Wakar Production',
@@ -54,6 +56,7 @@ async function main() {
             email: 'cinema@marodi.com',
             passwordHash,
             roles: ['PRO'],
+            name: 'Awa Ndiaye',
             proProfile: {
                 create: {
                     companyName: 'Marodi TV',
@@ -71,6 +74,7 @@ async function main() {
             email: 'agent@kilife.com',
             passwordHash,
             roles: ['AGENT'],
+            name: 'Cheikh Diop',
             agentProfile: {
                 create: {
                     agencyName: 'Teranga Talents',
@@ -87,6 +91,7 @@ async function main() {
             email: 'contact@sunucasting.sn',
             passwordHash,
             roles: ['AGENT'],
+            name: 'Fatou Sow',
             agentProfile: {
                 create: {
                     agencyName: 'Sunu Casting Agency',
@@ -150,6 +155,7 @@ async function main() {
         const actor = await prisma.user.create({
             data: {
                 email: data.email,
+                name: data.name,
                 passwordHash,
                 roles: ['ACTOR'],
                 actorProfile: {
@@ -172,6 +178,7 @@ async function main() {
         const crew = await prisma.user.create({
             data: {
                 email: data.email,
+                name: data.name,
                 passwordHash,
                 roles: ['CREW'],
                 crewProfile: {
