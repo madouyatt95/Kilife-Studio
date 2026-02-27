@@ -1,4 +1,5 @@
 import NextAuth, { type DefaultSession } from "next-auth"
+import { type JWT } from "next-auth/jwt"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { PrismaClient, Role } from "@prisma/client"
@@ -57,11 +58,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         })
     ],
     callbacks: {
-        jwt({ token, user, trigger, session }) {
+        jwt({ token, user }) {
             if (user) {
                 token.id = user.id
-                // @ts-ignore
-                token.roles = user.roles
+                token.roles = user.roles as Role[]
             }
             return token
         },
