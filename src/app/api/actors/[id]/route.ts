@@ -3,10 +3,11 @@ import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params
         const actor = await prisma.actorProfile.findUnique({
-            where: { id: params.id },
+            where: { id },
             include: {
                 user: {
                     select: {

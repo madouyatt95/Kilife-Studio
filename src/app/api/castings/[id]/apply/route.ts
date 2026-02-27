@@ -4,8 +4,9 @@ import { auth } from "@/auth"
 
 const prisma = new PrismaClient()
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
+        const { id } = await params
         const session = await auth()
         if (!session?.user?.roles?.includes("ACTOR")) {
             return NextResponse.json({ error: "Unauthorized. Must be ACTOR." }, { status: 403 })
@@ -17,7 +18,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         const existing = await prisma.castingApplication.findUnique({
             where: {
                 castingId_actorId: {
-                    castingId: params.id,
+                    castingId: id,
                     actorId: session.user.id
                 }
             }
@@ -29,7 +30,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
         const application = await prisma.castingApplication.create({
             data: {
-                castingId: params.id,
+                castingId: id,
                 actorId: session.user.id,
                 message,
                 pieces: pieces || [],
