@@ -14,6 +14,9 @@ declare module "next-auth" {
             roles: Role[]
         } & DefaultSession["user"]
     }
+    interface User {
+        roles: Role[]
+    }
 }
 
 declare module "next-auth/jwt" {
@@ -60,7 +63,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     callbacks: {
         jwt({ token, user }) {
             if (user) {
-                token.id = user.id
+                token.id = user.id as string
                 token.roles = user.roles as Role[]
             }
             return token
