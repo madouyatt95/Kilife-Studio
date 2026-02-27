@@ -10,8 +10,8 @@ export const metadata: Metadata = {
     description: "Découvrez les films, séries et courts-métrages réalisés au Sénégal.",
 }
 
-// Revalidate this page every hour
-export const revalidate = 3600
+// Force dynamic rendering - DB not available at build time on Vercel
+export const dynamic = "force-dynamic"
 
 export default async function FilmsPage() {
     const films = await prisma.film.findMany({
