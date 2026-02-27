@@ -45,6 +45,10 @@ export async function POST(req: Request) {
             await prisma.actorProfile.create({ data: { userId: user.id } })
         } else if (role === Role.PRO) {
             await prisma.proProfile.create({ data: { userId: user.id, companyName: "Nouveau Pro" } })
+        } else if (role === Role.AGENT) {
+            await prisma.agentProfile.create({ data: { userId: user.id, agencyName: "Nouvelle Agence" } })
+        } else if (role === Role.CREW) {
+            await prisma.crewProfile.create({ data: { userId: user.id } })
         }
 
         return NextResponse.json(

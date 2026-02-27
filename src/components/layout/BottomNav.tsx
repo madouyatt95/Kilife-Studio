@@ -13,6 +13,7 @@ export function BottomNav() {
     const navItems = [
         { label: "Accueil", href: "/", icon: Home },
         { label: "Talents", href: "/talents", icon: Search },
+        { label: "Films", href: "/films", icon: Clapperboard },
         { label: "Castings", href: "/castings", icon: Clapperboard },
         { label: "Académie", href: "/academie", icon: GraduationCap },
         { label: "Gérer", href: "/dashboard", icon: LayoutDashboard },

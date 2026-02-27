@@ -19,12 +19,20 @@ export function TopBar() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-white/10 glass">
             <div className="container flex h-16 items-center justify-between px-4 sm:px-8">
-                <Link href="/" className="flex items-center space-x-2">
-                    <Film className="h-6 w-6 text-primary" />
-                    <span className="font-bold text-xl tracking-tight hidden sm:inline-block">
-                        Kilife Studio
-                    </span>
-                </Link>
+                <div className="flex items-center space-x-6">
+                    <Link href="/" className="flex items-center space-x-2">
+                        <Film className="h-6 w-6 text-primary" />
+                        <span className="font-bold text-xl tracking-tight hidden sm:inline-block">
+                            Kilife Studio
+                        </span>
+                    </Link>
+                    <nav className="hidden md:flex items-center space-x-4 text-sm font-medium">
+                        <Link href="/castings" className="text-slate-300 hover:text-white transition-colors">Castings</Link>
+                        <Link href="/talents" className="text-slate-300 hover:text-white transition-colors">Talents</Link>
+                        <Link href="/films" className="text-slate-300 hover:text-white transition-colors">Films</Link>
+                        <Link href="/academie" className="text-slate-300 hover:text-white transition-colors">Académie</Link>
+                    </nav>
+                </div>
                 <div className="flex flex-1 items-center justify-end space-x-4">
                     <nav className="flex items-center space-x-2">
                         {session ? (

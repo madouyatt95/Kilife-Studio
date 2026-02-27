@@ -12,6 +12,8 @@ enum Role {
   PRO
   STUDENT
   ADMIN
+  CREW
+  AGENT
 }
 
 enum ProfileStatus {
@@ -67,6 +69,8 @@ model User {
 
   actorProfile  ActorProfile?
   proProfile    ProProfile?
+  crewProfile   CrewProfile?
+  agentProfile  AgentProfile?
   
   applications  CastingApplication[]
   messagesSent  Message[] @relation("MessagesSent")
@@ -85,6 +89,9 @@ model ActorProfile {
   userId            String   @unique
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  agentId           String?
+  agent             AgentProfile? @relation(fields: [agentId], references: [id])
+
   photo             String?
   galerie           String[]
   bio               String?
@@ -104,6 +111,46 @@ model ActorProfile {
   
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  
+  films             Film[]   @relation("FilmActors")
+}
+
+model CrewProfile {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  photo             String?
+  bio               String?
+  professions       String[] // e.g., ["Réalisateur", "Ingénieur du Son", "Scénariste"]
+  experiences       Json?    // Array of { title, year, role, production }
+  
+  portfolioUrl      String?
+  cvUrl             String?
+  
+  isVerified        Boolean  @default(false)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  films             Film[]   @relation("FilmCrew")
+}
+
+model AgentProfile {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  agencyName    String
+  bio           String?
+  logoUrl       String?
+  siteWeb       String?
+  isVerified    Boolean  @default(false)
+  
+  talents       ActorProfile[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model ProProfile {
@@ -117,6 +164,7 @@ model ProProfile {
   isVerified    Boolean  @default(false)
   
   castings      Casting[]
+  documents     Document[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -141,9 +189,32 @@ model Casting {
   
   applications  CastingApplication[]
   messages      Message[]
+  documents     Document[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model Document {
+  id               String   @id @default(uuid())
+  
+  proId            String
+  pro              ProProfile @relation(fields: [proId], references: [id], onDelete: Cascade)
+  
+  castingId        String?
+  casting          Casting?   @relation(fields: [castingId], references: [id], onDelete: Cascade)
+  
+  applicationId    String?
+  application      CastingApplication? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  
+  titre            String
+  type             String   // "ENGAGEMENT", "IMAGE_RIGHTS", "NDA"
+  pdfUrl           String?
+  
+  status           String   @default("DRAFT") // DRAFT, GENERATED, SIGNED
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model CastingApplication {
@@ -158,6 +229,8 @@ model CastingApplication {
   
   status        ApplicationStatus @default(PENDING)
   notes         String?  // Internal notes for PRO
+
+  documents     Document[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -203,8 +276,13 @@ model Film {
   annee         Int
   synopsis      String   @db.Text
   affiche       String?
-  acteurs       String[] // IDs of ActorProfiles or plain names
-  realisateur   String
+  trailerUrl    String?
+  isPublished   Boolean  @default(false)
+  
+  acteurs       ActorProfile[] @relation("FilmActors")
+  equipeTechnique CrewProfile[] @relation("FilmCrew")
+  
+  realisateur   String // Plain text fallback or specific lead director name
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

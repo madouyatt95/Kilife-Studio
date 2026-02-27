@@ -81,8 +81,10 @@ export default function RegisterPage() {
                                     <SelectValue placeholder="Choisissez votre profil" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="ACTOR">Talent (Acteur, Technicien...)</SelectItem>
-                                    <SelectItem value="PRO">Professionnel (Production, Agence...)</SelectItem>
+                                    <SelectItem value="ACTOR">Talent (Acteur, Figurant)</SelectItem>
+                                    <SelectItem value="CREW">Technicien (Réal, Son, Image...)</SelectItem>
+                                    <SelectItem value="PRO">Professionnel (Production, Casting)</SelectItem>
+                                    <SelectItem value="AGENT">Agent Artistique / Agence</SelectItem>
                                     <SelectItem value="STUDENT">Étudiant (Académie)</SelectItem>
                                 </SelectContent>
                             </Select>
