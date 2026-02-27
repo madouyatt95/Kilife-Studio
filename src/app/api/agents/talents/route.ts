@@ -26,6 +26,7 @@ export async function GET(req: Request) {
                     include: {
                         user: {
                             select: {
+                                name: true,
                                 email: true,
                             }
                         }

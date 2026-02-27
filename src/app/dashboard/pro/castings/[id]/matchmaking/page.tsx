@@ -89,13 +89,13 @@ export default function MatchmakingPage() {
 
                             <div className="h-28 bg-gradient-to-br from-slate-800 to-slate-900 relative">
                                 <Avatar className="h-24 w-24 border-4 border-slate-900 absolute -bottom-12 left-6 z-20">
-                                    <AvatarImage src={match.galerie?.[0] || `https://api.dicebear.com/7.x/initials/svg?seed=${match.user.email}`} className="object-cover" />
-                                    <AvatarFallback>{match.user.email?.charAt(0)}</AvatarFallback>
+                                    <AvatarImage src={match.galerie?.[0] || `https://api.dicebear.com/7.x/initials/svg?seed=${match.user.name || match.user.email}`} className="object-cover" />
+                                    <AvatarFallback>{(match.user.name || match.user.email)?.charAt(0)}</AvatarFallback>
                                 </Avatar>
                             </div>
 
                             <CardHeader className="pt-14 pb-2">
-                                <CardTitle className="text-lg truncate">{match.user.email.split('@')[0]}</CardTitle>
+                                <CardTitle className="text-lg truncate">{match.user.name || match.user.email.split('@')[0]}</CardTitle>
                                 <p className="text-sm text-primary font-medium">{match.age ? `${match.age} ans` : "Âge non défini"}</p>
                             </CardHeader>
 

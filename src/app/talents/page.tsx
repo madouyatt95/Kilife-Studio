@@ -92,7 +92,7 @@ export default function TalentsPage() {
                                 )}
                             </div>
                             <CardHeader className="p-4 pb-2">
-                                <CardTitle className="line-clamp-1">{talent.user.email.split("@")[0]}</CardTitle>
+                                <CardTitle className="line-clamp-1">{talent.user.name || talent.user.email.split("@")[0]}</CardTitle>
                                 <div className="flex items-center text-sm text-muted-foreground">
                                     <MapPin className="mr-1 h-3 w-3" />
                                     {talent.ville || "Dakar, Sénégal"}

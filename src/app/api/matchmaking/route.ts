@@ -71,7 +71,7 @@ export async function GET(req: Request) {
             where: whereClause,
             include: {
                 user: {
-                    select: { email: true } // Name will be handled if needed, DB only has email right now natively or via Agent
+                    select: { name: true, email: true } // Name will be handled if needed, DB only has email right now natively or via Agent
                 },
                 endorsements: {
                     select: { rating: true }

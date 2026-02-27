@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@/auth"
 
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url)
@@ -14,10 +16,10 @@ export async function GET(req: Request) {
             where: {
                 status: "APPROVED",
                 user: {
-                    email: {
-                        contains: query, // Replace with proper name search if user model had names
-                        mode: "insensitive"
-                    }
+                    OR: [
+                        { name: { contains: query, mode: "insensitive" } },
+                        { email: { contains: query, mode: "insensitive" } }
+                    ]
                 },
                 ...(competences.length > 0 && {
                     competences: {
@@ -29,6 +31,7 @@ export async function GET(req: Request) {
                 user: {
                     select: {
                         id: true,
+                        name: true,
                         avatarUrl: true,
                         email: true,
                     }
