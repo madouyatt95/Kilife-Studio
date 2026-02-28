@@ -3,20 +3,22 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, Search, Clapperboard, GraduationCap, LayoutDashboard } from "lucide-react"
+import { useI18n } from "@/lib/i18n-context"
 
 export function BottomNav() {
     const pathname = usePathname()
+    const { t } = useI18n()
 
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
     if (isAuthPage) return null
 
     const navItems = [
-        { label: "Accueil", href: "/", icon: Home },
-        { label: "Talents", href: "/talents", icon: Search },
-        { label: "Films", href: "/films", icon: Clapperboard },
-        { label: "Castings", href: "/castings", icon: Clapperboard },
-        { label: "Académie", href: "/academie", icon: GraduationCap },
-        { label: "Gérer", href: "/dashboard", icon: LayoutDashboard },
+        { label: t("nav.home"), href: "/", icon: Home },
+        { label: t("nav.talents"), href: "/talents", icon: Search },
+        { label: t("nav.films"), href: "/films", icon: Clapperboard },
+        { label: t("nav.castings"), href: "/castings", icon: Clapperboard },
+        { label: t("nav.academy"), href: "/academie", icon: GraduationCap },
+        { label: t("nav.manage"), href: "/dashboard", icon: LayoutDashboard },
     ]
 
     return (

@@ -1,0 +1,95 @@
+{
+    "nav": {
+        "home": "Home",
+        "castings": "Castings",
+        "talents": "Talents",
+        "films": "Films",
+        "academy": "Academy",
+        "manage": "Manage",
+        "login": "Log In",
+        "register": "Sign Up",
+        "logout": "Log Out",
+        "myAccount": "My Account",
+        "dashboard": "Dashboard",
+        "admin": "Administration"
+    },
+    "landing": {
+        "badge": "The Future of Senegalese Studio",
+        "title1": "THE EXCELLENCE OF",
+        "title2": "KILIFE STUDIO",
+        "subtitle": "Join the official platform for cinema professionals. Talents, producers and enthusiasts united at the heart of creation.",
+        "cta": "Start the Journey",
+        "showreel": "Watch Showreel",
+        "talentTitle": "Talent Registry",
+        "talentDesc": "A comprehensive national directory of actors, technicians and creatives. Be visible everywhere.",
+        "talentLink": "Discover",
+        "castingTitle": "Casting Calls",
+        "castingDesc": "Access the best filming opportunities in Senegal and internationally. Apply in one click.",
+        "castingLink": "Apply",
+        "academyTitle": "Academy & Masterclass",
+        "academyDesc": "Perfect your craft with the biggest names in Senegalese cinema. Certified training.",
+        "academyLink": "Learn",
+        "quote": "\"Kilife Studio is not just an image, it's the essence of a vision told through cinema.\""
+    },
+    "talents": {
+        "title": "National Talent Registry",
+        "subtitle": "Discover verified profiles of Senegalese cinema.",
+        "search": "Search for a talent...",
+        "empty": "No talent found for this search.",
+        "verified": "Verified",
+        "demoReel": "Demo reel",
+        "viewProfile": "View profile",
+        "years": "y/o"
+    },
+    "castings": {
+        "title": "Casting Calls",
+        "subtitle": "Find your next opportunity in Senegalese cinema.",
+        "apply": "Apply",
+        "details": "View details",
+        "deadline": "Deadline",
+        "noResults": "No castings available at the moment."
+    },
+    "films": {
+        "title": "Film Library",
+        "subtitle": "Discover Senegalese productions and their cast.",
+        "actors": "Actors",
+        "director": "Director",
+        "synopsis": "Synopsis",
+        "cast": "Cast",
+        "trailer": "Trailer"
+    },
+    "auth": {
+        "loginTitle": "Log In",
+        "loginSubtitle": "Access your professional space",
+        "registerTitle": "Create an Account",
+        "registerSubtitle": "Join the Senegalese film community",
+        "email": "Email address",
+        "password": "Password",
+        "confirmPassword": "Confirm password",
+        "submit": "Log In",
+        "registerSubmit": "Create my account",
+        "noAccount": "Don't have an account?",
+        "hasAccount": "Already have an account?",
+        "role": "Your role"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "profile": "My Profile",
+        "applications": "My Applications",
+        "myCastings": "My Castings",
+        "myTalents": "My Agency",
+        "documents": "Documents",
+        "addFilm": "Add a Film"
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "back": "Back",
+        "seeMore": "See more",
+        "accessDenied": "Access Denied"
+    }
+}

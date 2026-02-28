@@ -9,11 +9,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Search, MapPin, Star, Video } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useI18n } from "@/lib/i18n-context"
 
 export default function TalentsPage() {
     const [talents, setTalents] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState("")
+    const { t } = useI18n()
 
     useEffect(() => {
         fetchTalents()
@@ -36,13 +38,13 @@ export default function TalentsPage() {
         <div className="container py-8 px-4 sm:px-8 max-w-7xl mx-auto space-y-8">
             <div className="flex flex-col space-y-4 md:flex-row md:items-end md:justify-between md:space-y-0">
                 <div className="space-y-2">
-                    <h1 className="text-3xl font-bold tracking-tight md:text-4xl text-white">Registre National des Talents</h1>
-                    <p className="text-muted-foreground">Découvrez les profils validés du cinéma sénégalais.</p>
+                    <h1 className="text-3xl font-bold tracking-tight md:text-4xl text-white">{t("talents.title")}</h1>
+                    <p className="text-muted-foreground">{t("talents.subtitle")}</p>
                 </div>
                 <div className="flex w-full items-center space-x-2 md:w-auto">
                     <Input
                         type="search"
-                        placeholder="Rechercher un talent..."
+                        placeholder={t("talents.search")}
                         className="md:w-[300px] bg-slate-900 border-white/10"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -64,7 +66,7 @@ export default function TalentsPage() {
                     ))
                 ) : talents.length === 0 ? (
                     <div className="col-span-full py-12 text-center text-muted-foreground">
-                        Aucun talent trouvé pour cette recherche.
+                        {t("talents.empty")}
                     </div>
                 ) : (
                     talents.map((talent) => (
@@ -82,12 +84,12 @@ export default function TalentsPage() {
                                 )}
                                 {talent.isVerified && (
                                     <div className="absolute top-2 right-2">
-                                        <Badge variant="secondary" className="bg-primary text-primary-foreground font-semibold"><Star className="h-3 w-3 mr-1" /> Vérifié</Badge>
+                                        <Badge variant="secondary" className="bg-primary text-primary-foreground font-semibold"><Star className="h-3 w-3 mr-1" /> {t("talents.verified")}</Badge>
                                     </div>
                                 )}
                                 {talent.demoVideoId && (
                                     <div className="absolute bottom-2 left-2">
-                                        <Badge variant="outline" className="bg-slate-950/80 backdrop-blur"><Video className="h-3 w-3 mr-1" /> Bande démo</Badge>
+                                        <Badge variant="outline" className="bg-slate-950/80 backdrop-blur"><Video className="h-3 w-3 mr-1" /> {t("talents.demoReel")}</Badge>
                                     </div>
                                 )}
                             </div>
@@ -108,7 +110,7 @@ export default function TalentsPage() {
                             </CardContent>
                             <CardFooter className="p-4 pt-0">
                                 <Button className="w-full" variant="outline" asChild>
-                                    <Link href={`/talents/${talent.id}`}>Voir le profil</Link>
+                                    <Link href={`/talents/${talent.id}`}>{t("talents.viewProfile")}</Link>
                                 </Button>
                             </CardFooter>
                         </Card>

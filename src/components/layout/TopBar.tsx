@@ -7,10 +7,13 @@ import { Button } from "@/components/ui/button"
 import { Film, User, Search, BookOpen, UserCircle, LogOut, Settings } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher"
+import { useI18n } from "@/lib/i18n-context"
 
 export function TopBar() {
     const { data: session } = useSession()
     const pathname = usePathname()
+    const { t } = useI18n()
 
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
 
@@ -27,13 +30,14 @@ export function TopBar() {
                         </span>
                     </Link>
                     <nav className="hidden md:flex items-center space-x-4 text-sm font-medium">
-                        <Link href="/castings" className="text-slate-300 hover:text-white transition-colors">Castings</Link>
-                        <Link href="/talents" className="text-slate-300 hover:text-white transition-colors">Talents</Link>
-                        <Link href="/films" className="text-slate-300 hover:text-white transition-colors">Films</Link>
-                        <Link href="/academie" className="text-slate-300 hover:text-white transition-colors">Académie</Link>
+                        <Link href="/castings" className="text-slate-300 hover:text-white transition-colors">{t("nav.castings")}</Link>
+                        <Link href="/talents" className="text-slate-300 hover:text-white transition-colors">{t("nav.talents")}</Link>
+                        <Link href="/films" className="text-slate-300 hover:text-white transition-colors">{t("nav.films")}</Link>
+                        <Link href="/academie" className="text-slate-300 hover:text-white transition-colors">{t("nav.academy")}</Link>
                     </nav>
                 </div>
-                <div className="flex flex-1 items-center justify-end space-x-4">
+                <div className="flex flex-1 items-center justify-end space-x-2">
+                    <LanguageSwitcher />
                     <nav className="flex items-center space-x-2">
                         {session ? (
                             <DropdownMenu>
@@ -48,32 +52,32 @@ export function TopBar() {
                                 <DropdownMenuContent className="w-56" align="end" forceMount>
                                     <DropdownMenuLabel className="font-normal">
                                         <div className="flex flex-col space-y-1">
-                                            <p className="text-sm font-medium leading-none">Mon Compte</p>
+                                            <p className="text-sm font-medium leading-none">{t("nav.myAccount")}</p>
                                             <p className="text-xs leading-none text-muted-foreground">{session.user.email}</p>
                                         </div>
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem asChild>
-                                        <Link href="/dashboard"><User className="mr-2 h-4 w-4" /> Dashboard</Link>
+                                        <Link href="/dashboard"><User className="mr-2 h-4 w-4" /> {t("nav.dashboard")}</Link>
                                     </DropdownMenuItem>
                                     {session.user.roles?.includes("ADMIN") && (
                                         <DropdownMenuItem asChild>
-                                            <Link href="/admin"><Settings className="mr-2 h-4 w-4" /> Administration</Link>
+                                            <Link href="/admin"><Settings className="mr-2 h-4 w-4" /> {t("nav.admin")}</Link>
                                         </DropdownMenuItem>
                                     )}
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })} className="text-destructive focus:text-destructive">
-                                        <LogOut className="mr-2 h-4 w-4" /> Déconnexion
+                                        <LogOut className="mr-2 h-4 w-4" /> {t("nav.logout")}
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         ) : (
                             <div className="flex space-x-2">
                                 <Button variant="ghost" asChild className="hidden sm:flex">
-                                    <Link href="/login">Connexion</Link>
+                                    <Link href="/login">{t("nav.login")}</Link>
                                 </Button>
                                 <Button asChild>
-                                    <Link href="/register">S'inscrire</Link>
+                                    <Link href="/register">{t("nav.register")}</Link>
                                 </Button>
                             </div>
                         )}

@@ -1,0 +1,95 @@
+{
+    "nav": {
+        "home": "Accueil",
+        "castings": "Castings",
+        "talents": "Talents",
+        "films": "Films",
+        "academy": "Académie",
+        "manage": "Gérer",
+        "login": "Connexion",
+        "register": "S'inscrire",
+        "logout": "Déconnexion",
+        "myAccount": "Mon Compte",
+        "dashboard": "Dashboard",
+        "admin": "Administration"
+    },
+    "landing": {
+        "badge": "Le Futur du Studio Sénégalais",
+        "title1": "L'EXCELLENCE DE",
+        "title2": "KILIFE STUDIO",
+        "subtitle": "Rejoignez la plateforme officielle des professionnels du cinéma. Talents, producteurs et passionnés réunis au cœur de la création.",
+        "cta": "Commencer l'Aventure",
+        "showreel": "Voir le Showreel",
+        "talentTitle": "Registre des Talents",
+        "talentDesc": "Un annuaire national complet regroupant acteurs, techniciens et créatifs. Soyez visible partout.",
+        "talentLink": "Découvrir",
+        "castingTitle": "Appels à Casting",
+        "castingDesc": "Accédez aux meilleures opportunités de tournage au Sénégal et à l'international. Postulez en un clic.",
+        "castingLink": "Postuler",
+        "academyTitle": "Académie & Masterclass",
+        "academyDesc": "Perfectionnez votre art avec les plus grands noms du cinéma sénégalais. Formations certifiantes.",
+        "academyLink": "Se Former",
+        "quote": "\"Kilife Studio n'est pas seulement une image, c'est l'essence d'une vision racontée à travers le cinéma.\""
+    },
+    "talents": {
+        "title": "Registre National des Talents",
+        "subtitle": "Découvrez les profils validés du cinéma sénégalais.",
+        "search": "Rechercher un talent...",
+        "empty": "Aucun talent trouvé pour cette recherche.",
+        "verified": "Vérifié",
+        "demoReel": "Bande démo",
+        "viewProfile": "Voir le profil",
+        "years": "ans"
+    },
+    "castings": {
+        "title": "Appels à Casting",
+        "subtitle": "Trouvez votre prochaine opportunité dans le cinéma sénégalais.",
+        "apply": "Postuler",
+        "details": "Voir les détails",
+        "deadline": "Date limite",
+        "noResults": "Aucun casting disponible pour le moment."
+    },
+    "films": {
+        "title": "Cinémathèque",
+        "subtitle": "Découvrez les productions sénégalaises et leur casting.",
+        "actors": "Acteurs",
+        "director": "Réalisateur",
+        "synopsis": "Synopsis",
+        "cast": "Casting",
+        "trailer": "Bande-annonce"
+    },
+    "auth": {
+        "loginTitle": "Connexion",
+        "loginSubtitle": "Accédez à votre espace professionnel",
+        "registerTitle": "Créer un compte",
+        "registerSubtitle": "Rejoignez la communauté cinématographique sénégalaise",
+        "email": "Adresse email",
+        "password": "Mot de passe",
+        "confirmPassword": "Confirmer le mot de passe",
+        "submit": "Se connecter",
+        "registerSubmit": "Créer mon compte",
+        "noAccount": "Pas encore de compte ?",
+        "hasAccount": "Déjà un compte ?",
+        "role": "Votre rôle"
+    },
+    "dashboard": {
+        "title": "Tableau de Bord",
+        "profile": "Mon Profil",
+        "applications": "Mes Candidatures",
+        "myCastings": "Mes Castings",
+        "myTalents": "Mon Agence",
+        "documents": "Documents",
+        "addFilm": "Ajouter un Film"
+    },
+    "common": {
+        "loading": "Chargement...",
+        "error": "Une erreur est survenue",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "delete": "Supprimer",
+        "edit": "Modifier",
+        "back": "Retour",
+        "seeMore": "Voir plus",
+        "accessDenied": "Accès Refusé"
+    }
+}

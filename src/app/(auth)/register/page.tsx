@@ -10,10 +10,12 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
+import { useI18n } from "@/lib/i18n-context"
 
 export default function RegisterPage() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
+    const { t } = useI18n()
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -57,25 +59,25 @@ export default function RegisterPage() {
             <Card className="w-full max-w-md">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold tracking-tight text-center">
-                        Inscription
+                        {t("auth.registerTitle")}
                     </CardTitle>
                     <CardDescription className="text-center">
-                        Rejoignez Ciné Sénégal
+                        {t("auth.registerSubtitle")}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={onSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">{t("auth.email")}</Label>
                             <Input id="email" name="email" type="email" placeholder="m.diop@exemple.com" required />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Mot de passe</Label>
+                            <Label htmlFor="password">{t("auth.password")}</Label>
                             <Input id="password" name="password" type="password" required />
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="role">Type de Profil</Label>
+                            <Label htmlFor="role">{t("auth.role")}</Label>
                             <Select name="role" required defaultValue="ACTOR">
                                 <SelectTrigger>
                                     <SelectValue placeholder="Choisissez votre profil" />
@@ -91,15 +93,15 @@ export default function RegisterPage() {
                         </div>
 
                         <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? "Création..." : "S'inscrire"}
+                            {loading ? t("common.loading") : t("auth.registerSubmit")}
                         </Button>
                     </form>
                 </CardContent>
                 <CardFooter className="text-center justify-center">
                     <span className="text-sm text-slate-500">
-                        Déjà un compte ?{" "}
+                        {t("auth.hasAccount")}{" "}
                         <Link href="/login" className="text-primary hover:underline">
-                            Se connecter
+                            {t("nav.login")}
                         </Link>
                     </span>
                 </CardFooter>

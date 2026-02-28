@@ -1,0 +1,95 @@
+{
+    "nav": {
+        "home": "Kër gi",
+        "castings": "Castings yi",
+        "talents": "Xam-xam yi",
+        "films": "Films yi",
+        "academy": "Jàng",
+        "manage": "Saytu",
+        "login": "Dugg",
+        "register": "Bindu",
+        "logout": "Génne",
+        "myAccount": "Sama Compte",
+        "dashboard": "Saytu bi",
+        "admin": "Njàng"
+    },
+    "landing": {
+        "badge": "Ginnaaw Studio bu Sénégal",
+        "title1": "NJËKK BI CI",
+        "title2": "KILIFE STUDIO",
+        "subtitle": "Jëlee ci plateforme bi nguir nimoo yi ak yeneen. Artistes, producteurs ak jëmm ci cinéma bi tëddi fii.",
+        "cta": "Tambali tëdd bi",
+        "showreel": "Xool Showreel bi",
+        "talentTitle": "Répertoire Xam-xam yi",
+        "talentDesc": "Benn annuaire bu nekk ci biir réew mi, ngir acteurs, techniciens ak artistes. Mën nañu la gis ci biir.",
+        "talentLink": "Xool",
+        "castingTitle": "Woote Casting yi",
+        "castingDesc": "Jël sa chance ci tournages yu bees ci Sénégal ak àdduna bi. Postuler ci benn clic.",
+        "castingLink": "Postuler",
+        "academyTitle": "Jàng ak Masterclass",
+        "academyDesc": "Yëkkati sa xam-xam ak nimoo yu mag yu cinéma bu Sénégal. Formations certifiantes.",
+        "academyLink": "Jàng",
+        "quote": "\"Kilife Studio duñ benn nataal rekk, moo ngi ci biir benn xalaat bu ñu bëgg a wax ci cinéma.\""
+    },
+    "talents": {
+        "title": "Répertoire Xam-xam yi ci Réew mi",
+        "subtitle": "Seetlu profils yi ci cinéma bu Sénégal.",
+        "search": "Wut ab xam-xam...",
+        "empty": "Amul benn xam-xam ci wut bi.",
+        "verified": "Dëgg na",
+        "demoReel": "Vidéo démo",
+        "viewProfile": "Xool profil bi",
+        "years": "at"
+    },
+    "castings": {
+        "title": "Woote Casting yi",
+        "subtitle": "Jël sa chance bu jëkk ci cinéma bu Sénégal.",
+        "apply": "Postuler",
+        "details": "Xool détails yi",
+        "deadline": "Bés bu mujj",
+        "noResults": "Amul casting ci diir bi."
+    },
+    "films": {
+        "title": "Cinémathèque bi",
+        "subtitle": "Seetlu productions yu Sénégal ak casting yi.",
+        "actors": "Acteurs yi",
+        "director": "Réalisateur bi",
+        "synopsis": "Synopsis",
+        "cast": "Casting",
+        "trailer": "Bande-annonce"
+    },
+    "auth": {
+        "loginTitle": "Dugg",
+        "loginSubtitle": "Dugg ci sa espace professionnel",
+        "registerTitle": "Sos benn compte",
+        "registerSubtitle": "Jëlee ci communauté cinéma bu Sénégal",
+        "email": "Adresse email",
+        "password": "Baatu jëf",
+        "confirmPassword": "Dëggal baatu jëf bi",
+        "submit": "Dugg",
+        "registerSubmit": "Sos sama compte",
+        "noAccount": "Amoo compte ?",
+        "hasAccount": "Am nga compte ?",
+        "role": "Sa rôle"
+    },
+    "dashboard": {
+        "title": "Saytu bi",
+        "profile": "Sama Profil",
+        "applications": "Sama Candidatures",
+        "myCastings": "Sama Castings",
+        "myTalents": "Sama Agence",
+        "documents": "Xëtu wii",
+        "addFilm": "Yokk ab Film"
+    },
+    "common": {
+        "loading": "Yegsi naa...",
+        "error": "Am na benn jafe-jafe",
+        "save": "Denc",
+        "cancel": "Neenal",
+        "delete": "Far",
+        "edit": "Soppi",
+        "back": "Dellu",
+        "seeMore": "Xool yeneen",
+        "accessDenied": "Baaxul ngir yow"
+    }
+}
