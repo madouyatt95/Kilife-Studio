@@ -73,7 +73,7 @@ export function TopBar() {
                             </DropdownMenu>
                         ) : (
                             <div className="flex space-x-2">
-                                <Button variant="ghost" asChild className="hidden sm:flex">
+                                <Button variant="ghost" asChild>
                                     <Link href="/login">{t("nav.login")}</Link>
                                 </Button>
                                 <Button asChild>
