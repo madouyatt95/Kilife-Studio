@@ -104,33 +104,16 @@ async function main() {
     })
 
     // --- 4. ACTORS (WITH AND WITHOUT AGENT) ---
-    // A function to generate random Unsplash portrait IDs for variety
-    const malePortraits = [
-        '1506794778202-cad84cf45f1d', // Black man with dreads
-        '1531427186611-ecfd6d936c79', // Black man
-        '1507003211169-0a1dd7228f2d', // Black man smiling
-        '1492562080023-ab3db95bfbce', // Black man side profile
-        '1504257432389-523431eaaa6c', // Black man
-        '1519085360753-af0119f7cbe7'  // Black man
-    ]
-    const femalePortraits = [
-        '1531123897727-8f129e1bf98c', // Black woman
-        '1534528741775-53994a69daeb', // Black woman smiling
-        '1494790108377-be9c29b29330', // Black woman portrait
-        '1517841905240-472988babdf9', // Black woman
-        '1489424731084-a5d8b219a5bb', // Black woman close up
-        '1438761681033-6461ffad8d80'  // Black woman
-    ]
-
+    // Photos are hosted locally in /public/avatars/ for guaranteed reliability
     const actorsData = [
-        { email: 'acteur1@kilife.com', name: 'Mamadou Ba', gender: 'M', age: 26, ville: 'Dakar', agentId: agent1.agentProfile!.id, competences: ['Arts Martiaux', 'Wolof', 'Français'], photo: `https://images.unsplash.com/photo-${malePortraits[0]}?w=800&q=80` },
-        { email: 'actrice1@kilife.com', name: 'Ndeye Fatou Faye', gender: 'F', age: 31, ville: 'Saint-Louis', agentId: agent1.agentProfile!.id, competences: ['Danse Contemporaine', 'Chant', 'Wolof', 'Pulaar', 'Français'], photo: `https://images.unsplash.com/photo-${femalePortraits[0]}?w=800&q=80` },
-        { email: 'omar.sy.local@gmail.com', name: 'Omar Sy', gender: 'M', age: 44, ville: 'Dakar', agentId: null, competences: ['Français', 'Anglais', 'Comédie', 'Stand-up'], photo: `https://images.unsplash.com/photo-${malePortraits[1]}?w=800&q=80` },
-        { email: 'aissatou.drame@yahoo.fr', name: 'Aïssatou Dramé', gender: 'F', age: 22, ville: 'Thiès', agentId: agent2.agentProfile!.id, competences: ['Sérère', 'Wolof', 'Chant', 'Mannequinat'], photo: `https://images.unsplash.com/photo-${femalePortraits[1]}?w=800&q=80` },
-        { email: 'ibrahima.ndour@hotmail.com', name: 'Ibrahima Ndour', gender: 'M', age: 35, ville: 'Ziguinchor', agentId: agent2.agentProfile!.id, competences: ['Cascades', 'Pulaar', 'Conduite Moto', 'Français'], photo: `https://images.unsplash.com/photo-${malePortraits[2]}?w=800&q=80` },
-        { email: 'khadija.sow@gmail.com', name: 'Khadija Sow', gender: 'F', age: 28, ville: 'Dakar', agentId: null, competences: ['Wolof', 'Anglais courant', 'Equitation', 'Théâtre classique'], photo: `https://images.unsplash.com/photo-${femalePortraits[2]}?w=800&q=80` },
-        { email: 'mouhamed.fall@gmail.com', name: 'Mouhamed Fall', gender: 'M', age: 19, ville: 'Rufisque', agentId: agent1.agentProfile!.id, competences: ['Breakdance', 'Wolof', 'Street Workout'], photo: `https://images.unsplash.com/photo-${malePortraits[3]}?w=800&q=80` },
-        { email: 'fatimata.diallo@live.fr', name: 'Fatimata Diallo', gender: 'F', age: 45, ville: 'Dakar', agentId: null, competences: ['Pulaar', 'Wolof', 'Français', 'Cuisine classique'], photo: `https://images.unsplash.com/photo-${femalePortraits[3]}?w=800&q=80` },
+        { email: 'acteur1@kilife.com', name: 'Mamadou Ba', gender: 'M', age: 26, ville: 'Dakar', agentId: agent1.agentProfile!.id, competences: ['Arts Martiaux', 'Wolof', 'Français'], photo: '/avatars/actor_m1.png' },
+        { email: 'actrice1@kilife.com', name: 'Ndeye Fatou Faye', gender: 'F', age: 31, ville: 'Saint-Louis', agentId: agent1.agentProfile!.id, competences: ['Danse Contemporaine', 'Chant', 'Wolof', 'Pulaar', 'Français'], photo: '/avatars/actor_f1.png' },
+        { email: 'omar.sy.local@gmail.com', name: 'Omar Sy', gender: 'M', age: 44, ville: 'Dakar', agentId: null, competences: ['Français', 'Anglais', 'Comédie', 'Stand-up'], photo: '/avatars/actor_m3.png' },
+        { email: 'aissatou.drame@yahoo.fr', name: 'Aïssatou Dramé', gender: 'F', age: 22, ville: 'Thiès', agentId: agent2.agentProfile!.id, competences: ['Sérère', 'Wolof', 'Chant', 'Mannequinat'], photo: '/avatars/actor_f3.png' },
+        { email: 'ibrahima.ndour@hotmail.com', name: 'Ibrahima Ndour', gender: 'M', age: 35, ville: 'Ziguinchor', agentId: agent2.agentProfile!.id, competences: ['Cascades', 'Pulaar', 'Conduite Moto', 'Français'], photo: '/avatars/actor_m4.png' },
+        { email: 'khadija.sow@gmail.com', name: 'Khadija Sow', gender: 'F', age: 28, ville: 'Dakar', agentId: null, competences: ['Wolof', 'Anglais courant', 'Equitation', 'Théâtre classique'], photo: '/avatars/actor_f2.png' },
+        { email: 'mouhamed.fall@gmail.com', name: 'Mouhamed Fall', gender: 'M', age: 19, ville: 'Rufisque', agentId: agent1.agentProfile!.id, competences: ['Breakdance', 'Wolof', 'Street Workout'], photo: '/avatars/actor_m2.png' },
+        { email: 'fatimata.diallo@live.fr', name: 'Fatimata Diallo', gender: 'F', age: 45, ville: 'Dakar', agentId: null, competences: ['Pulaar', 'Wolof', 'Français', 'Cuisine classique'], photo: '/avatars/actor_f4.png' },
     ]
 
     const actorUsers = []
@@ -142,7 +125,7 @@ async function main() {
             competences: data.competences,
             langues: data.competences.filter(c => ['Wolof', 'Français', 'Anglais', 'Pulaar', 'Sérère'].includes(c)),
             photo: data.photo,
-            galerie: [data.photo, `https://images.unsplash.com/photo-${data.gender === 'M' ? malePortraits[4] : femalePortraits[4]}?w=800&q=80`],
+            galerie: [data.photo],
             completenessScore: Math.floor(Math.random() * 40) + 60, // 60-100%
             status: 'APPROVED',
             isVerified: Math.random() > 0.3
@@ -169,9 +152,9 @@ async function main() {
     // --- 5. CREW ---
     const crewUsers = []
     const crewData = [
-        { email: 'crew@kilife.com', name: 'Cheikh Bamba', professions: ['Chef Opérateur', 'DOP'], ville: 'Dakar', photo: `https://images.unsplash.com/photo-${malePortraits[5]}?w=800&q=80` },
-        { email: 'son@kilife.com', name: 'Aminata Gaye', professions: ['Ingénieur du Son', 'Perchiste'], ville: 'Thiès', photo: `https://images.unsplash.com/photo-${femalePortraits[5]}?w=800&q=80` },
-        { email: 'makeup@kilife.com', name: 'Binta Diop', professions: ['Maquilleuse SFX', 'Coiffeuse'], ville: 'Dakar', photo: `https://images.unsplash.com/photo-${femalePortraits[4]}?w=800&q=80` },
+        { email: 'crew@kilife.com', name: 'Cheikh Bamba', professions: ['Chef Opérateur', 'DOP'], ville: 'Dakar', photo: '/avatars/actor_m4.png' },
+        { email: 'son@kilife.com', name: 'Aminata Gaye', professions: ['Ingénieur du Son', 'Perchiste'], ville: 'Thiès', photo: '/avatars/actor_f2.png' },
+        { email: 'makeup@kilife.com', name: 'Binta Diop', professions: ['Maquilleuse SFX', 'Coiffeuse'], ville: 'Dakar', photo: '/avatars/actor_f4.png' },
     ]
 
     for (const data of crewData) {
